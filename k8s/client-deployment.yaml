@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec: 
+  replicas: 3
+  selector: 
+    matchLabels: 
+      component: web # this should mapping to component in template
+  template:
+    metadata:
+      labels:
+        component: web
+    spec: 
+      containers:
+        - name: client
+          image: tienvv1234/multi-client
+          ports:
+            - containerPort: 3000 # this should identical with the image multi-client

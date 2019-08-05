@@ -112,3 +112,44 @@ this will generate when we run command line ` travis encrypt-file`
 ```
     openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
 ```
+
+tag dockerid/multi-client:latest
+tag dockerid/multi-client:$SHA
+
+git SHA is identifying that current set of changes inside of our code base so to print out the SHA that we are currently working with right now : git rev-parse HEAD
+
+flow debug : deployments is running multi-client:SHA --> git checkout SHA --> debug the app knowing the exact code that is running in production
+we are using both of 2 tag
+-SHA : we are doing SHa to make sure that we can correctly update stuff in production inside of our cluster
+-latest: we are still doing the latest to make sure that f we ever have to re clone or rebuild our cluster at some point time, we always know that the latest tag image is truly the latest version of our image
+
+ingress-nginx using Helm
+Helm is a program that we can use to administer third party software inside of our communities cluster
+
+helm: helm client tool cli + tiller server
+
+# RBAC (Role Based access controll)
+the purpose of RBAC is to limit who can access what different types of resource inside of a kubernetes cluster
+- limit who can access and modify objects in our cluster
+- enable on google cloud by default
+- tiller wants to make changes to our cluster, so it need to get some permissions set
+
+security: User Account, Service Account, ClusterRoleBinding, RoleBinding
+UserAccount : Identifies a `person` administering our cluster
+ServiceAccount: Identifies a `pod` administering our cluster
+ClusterRoleBinding: Authorizes an account to do a certain set of actions cross the entire cluster
+RoleBinding: Authorizes an account to do a certain set of actions in a * single namespace*
+
+- the only different thing betwwen clusterROleBinding and RoleBInding is a cluster allows you to make changes across the entire
+cluster, role is only going to allow you to do a certain set of actions in a single namespace
+
+
+So we need to make sure the tiller server has the correct set of permissions so that it can actually make all these different changes
+
+kubectl create serviceaccount --namespace kube-system tiller
+- create a new service account called name tiller tiller in the kube-system namespace
+
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+create a new cluster role binding with the role `cluster-admin` and assign it to service account `tiller` and name is `tiller-cluster-rule`
+
+after run 2 above command then run `helm init` ==> helm init --service-account tiller --upgrade

@@ -153,3 +153,16 @@ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admi
 create a new cluster role binding with the role `cluster-admin` and assign it to service account `tiller` and name is `tiller-cluster-rule`
 
 after run 2 above command then run `helm init` ==> helm init --service-account tiller --upgrade
+
+so remember the ingress right here is really just a config file, this config file is being shipped off to the ingress controller
+the ingress controller is both making changes to nginx and hosting nginx simultaneously
+
+# General idea of what we are going to do
+- Check out a branch
+- make changes
+- commit changes
+- push to github branch
+- create a PR
+- wait for tests to show up 'green'
+- merge pr
+- see changes appear on prod
